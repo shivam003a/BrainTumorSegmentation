@@ -66,33 +66,28 @@ def main():
         mri_np = np.array(mriImage)
 
         maskImage = Image.open(mask_file)
-        mask_np = np.array(maskImage)
 
         # st.image(image, caption='Uploaded MRI Image', use_column_width=True)
         st.image(mriImage, width=100, caption='Uploaded MRI Image')
         st.image(maskImage, width=100, caption='Uploaded Mask Image')
 
         if st.button('Segment Image'):
-            segmented_image = segment_image(image_np, "brain_UNet_woDS")
+            segmented_image = segment_image(mri_np, "brain_UNet_woDS")
             # st.image(segmented_image, caption='Segmented Image', use_column_width=True)
             st.image(segmented_image, width=100, caption='Segmented Image')
-    else:
-        st.write("Upload MRI Image")
 
 
     if mri_file is not None and mask_file is None:
         mriImage = Image.open(mri_file)
-        image_np = np.array(mriImage)
+        mri_np = np.array(mriImage)
 
         # st.image(image, caption='Uploaded MRI Image', use_column_width=True)
         st.image(mriImage, width=100, caption='Uploaded MRI Image')
 
         if st.button('Segment Image'):
-            segmented_image = segment_image(image_np, "brain_UNet_woDS")
+            segmented_image = segment_image(mri_np, "brain_UNet_woDS")
             # st.image(segmented_image, caption='Segmented Image', use_column_width=True)
             st.image(segmented_image, width=100, caption='Segmented Image')
-    else:
-        st.write("Upload MRI Image")
 
 if __name__ == '__main__':
     main()
