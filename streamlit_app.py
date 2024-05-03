@@ -67,7 +67,7 @@ def main():
 
         maskImage = Image.open(mask_file)
 
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
 
         # st.image(image, caption='Uploaded MRI Image', use_column_width=True)
         with col1:
@@ -77,9 +77,10 @@ def main():
             st.image(maskImage, caption='Uploaded Mask Image')
 
         if st.button('Segment Image'):
-            segmented_image = segment_image(mri_np, "brain_UNet_woDS")
+            # segmented_image = segment_image(mri_np, "brain_UNet_woDS")
             # st.image(segmented_image, caption='Segmented Image', use_column_width=True)
-            st.image(segmented_image, width=100, caption='Segmented Image')
+            with col3:
+                st.image(maskImage, caption='Segmented Image')
 
 
     if mri_file is not None and mask_file is None:
