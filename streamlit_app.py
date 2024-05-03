@@ -21,7 +21,7 @@ with cols2:
     st.write("## Rajkiya Engineering College Kannauj")
 
 st.title("Brain Tumor Segmentation")
-st.sidebar.image("./logo.png", width=150)
+st.sidebar.image("./logo.png", width=120)
 st.sidebar.write("### Early Brain Tumor Detection System using Modified U-Net")
 st.sidebar.write("\nGuided By:  \nAshwini Kumar Upadhyaya  \nAsst. Professor, Rec Kannauj");
 st.sidebar.write("\n\n\nProject By:  \nShivam Singh(54)  \nDeependu Mishra(28) \nSudhir Tiwari(59) \nAshish Yadav(32) \nNitesh Kumar(39)");
