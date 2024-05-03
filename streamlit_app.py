@@ -12,7 +12,7 @@ import numpy as np
 # import matplotlib.image as mpimg
 
 st.title("Brain Tumor Segmentation")
-st.sidebar.image("./logo.png")
+st.sidebar.image("./logo.png", width=200)
 st.sidebar.write("Early Brain Tumor Detection System using Modified U-Net")
 
 def segment_image(image_np, model_name):
