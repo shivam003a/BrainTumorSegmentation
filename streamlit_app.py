@@ -58,8 +58,8 @@ def segment_image(image_np, model_name):
     # return segmented_image
 
 def main():
-    mri_file = st.file_uploader("Upload MRI Image", type=["png", "jpg", "jpeg"])
-    mask_file = st.file_uploader("Upload MRI Image", type=["png", "jpg", "jpeg"])
+    mri_file = st.file_uploader("Upload MRI Image", type=["png", "jpg", "jpeg"], key=1)
+    mask_file = st.file_uploader("Upload Mask Image", type=["png", "jpg", "jpeg"], key=2)
 
     if mri_file is not None and mask_file is not None:
         mriImage = Image.open(mri_file)
@@ -74,7 +74,8 @@ def main():
 
         if st.button('Segment Image'):
             segmented_image = segment_image(image_np, "brain_UNet_woDS")
-            st.image(segmented_image, caption='Segmented Image', use_column_width=True)
+            # st.image(segmented_image, caption='Segmented Image', use_column_width=True)
+            st.image(segmented_image, width=100, caption='Segmented Image')
     else:
         st.write("Upload MRI Image")
 
@@ -88,7 +89,8 @@ def main():
 
         if st.button('Segment Image'):
             segmented_image = segment_image(image_np, "brain_UNet_woDS")
-            st.image(segmented_image, caption='Segmented Image', use_column_width=True)
+            # st.image(segmented_image, caption='Segmented Image', use_column_width=True)
+            st.image(segmented_image, width=100, caption='Segmented Image')
     else:
         st.write("Upload MRI Image")
 
