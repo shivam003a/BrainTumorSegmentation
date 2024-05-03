@@ -11,6 +11,15 @@ import numpy as np
 # import matplotlib.pyplot as plt
 # import matplotlib.image as mpimg
 
+
+cols1, cols2 = st.columns([1, 4])
+
+with cols1:
+    st.image('./logo.png')
+
+with cols2:
+    st.write("Rajkiya Engineering College Kannauj")
+
 st.title("Brain Tumor Segmentation")
 st.sidebar.image("./logo.png", width=150)
 st.sidebar.write("Early Brain Tumor Detection System using Modified U-Net")
