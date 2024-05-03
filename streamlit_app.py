@@ -12,13 +12,13 @@ import numpy as np
 # import matplotlib.image as mpimg
 
 
-cols1, cols2 = st.columns([1, 4])
+cols1, cols2 = st.columns([1, 5])
 
 with cols1:
-    st.image('./logo.png', width=80)
+    st.image('./logo.png')
 
 with cols2:
-    st.write("# Rajkiya Engineering College Kannauj")
+    st.write("## Rajkiya Engineering College Kannauj")
 
 st.title("Brain Tumor Segmentation")
 st.sidebar.image("./logo.png", width=150)
