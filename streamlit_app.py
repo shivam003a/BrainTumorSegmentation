@@ -87,13 +87,17 @@ def main():
         mriImage = Image.open(mri_file)
         mri_np = np.array(mriImage)
 
+        col1, col2 = st.columns(2)
         # st.image(image, caption='Uploaded MRI Image', use_column_width=True)
-        st.image(mriImage, width=100, caption='Uploaded MRI Image')
+
+        with col1:
+            st.image(mriImage, caption='Uploaded MRI Image')
 
         if st.button('Segment Image'):
-            segmented_image = segment_image(mri_np, "brain_UNet_woDS")
+            # segmented_image = segment_image(mri_np, "brain_UNet_woDS")
             # st.image(segmented_image, caption='Segmented Image', use_column_width=True)
-            st.image(segmented_image, width=100, caption='Segmented Image')
+            with col2:
+                st.image(mriImage, width=100, caption='Segmented Image')
 
 if __name__ == '__main__':
     main()
