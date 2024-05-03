@@ -15,10 +15,10 @@ import numpy as np
 cols1, cols2 = st.columns([1, 4])
 
 with cols1:
-    st.image('./logo.png')
+    st.image('./logo.png', width=80)
 
 with cols2:
-    st.write("Rajkiya Engineering College Kannauj")
+    st.write("# Rajkiya Engineering College Kannauj")
 
 st.title("Brain Tumor Segmentation")
 st.sidebar.image("./logo.png", width=150)
