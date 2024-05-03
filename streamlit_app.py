@@ -22,7 +22,10 @@ with cols2:
 
 st.title("Brain Tumor Segmentation")
 st.sidebar.image("./logo.png", width=150)
-st.sidebar.write("Early Brain Tumor Detection System using Modified U-Net")
+st.sidebar.write("### Early Brain Tumor Detection System using Modified U-Net")
+st.sidebar.write("### Guided By");
+st.sidebar.write("### Ashwini Kumar Upadhyaya");
+st.sidebar.write("### Asst. Professor, Rec Kannauj")
 
 def segment_image(image_np, model_name):
     print("Hello")
