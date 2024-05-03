@@ -97,7 +97,7 @@ def main():
             # segmented_image = segment_image(mri_np, "brain_UNet_woDS")
             # st.image(segmented_image, caption='Segmented Image', use_column_width=True)
             with col2:
-                st.image(mriImage, width=100, caption='Segmented Image')
+                st.image(mriImage, caption='Segmented Image')
 
 if __name__ == '__main__':
     main()
