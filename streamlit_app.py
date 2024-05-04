@@ -1,15 +1,13 @@
 import streamlit as st
 from PIL import Image
 import numpy as np
-
-# import cv2
-# import torch
-# import yaml
-# import albumentations as albu
-# from albumentations.core.composition import Compose
-# import archs
-# import matplotlib.pyplot as plt
-# import matplotlib.image as mpimg
+import torch
+import cv2
+import albumentations as albu
+from albumentations.core.composition import Compose
+import archs
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 
 
 cols1, cols2 = st.columns([1, 5])
@@ -26,49 +24,71 @@ st.sidebar.write("### Early Brain Tumor Detection System using Modified U-Net")
 st.sidebar.write("\n**Guided By:**  \nAshwini Kumar Upadhyaya  \nAsst. Professor, Rec Kannauj");
 st.sidebar.write("\n\n\n**Project By:**  \nShivam Singh(54)  \nDeependu Mishra(28)  \nSudhir Tiwari(59)  \nAshish Yadav(23)  \nNitesh Kumar(39)")
 
-def segment_image(image_np, model_name):
-    print("Hello")
+def parse_args():
+    # Dummy function, no need for argparse in Streamlit
+    return {'image_path': None, 'model_name': 'UNet'}
+
+def segment_image(image, model):
     # Load model configuration
-    # with open('models/%s/config.yml' % model_name, 'r') as f:
-    #     config = yaml.load(f, Loader=yaml.FullLoader)
+    config = {
+        'input_h': 256,
+        'input_w': 256,
+        'input_channels': 3,
+        'num_classes': 1  # Assuming binary segmentation
+    }
 
-    # # Load model
-    # model = archs.__dict__[config['arch']](config['num_classes'], config['input_channels'])
-    # model.load_state_dict(torch.load('models/%s/model.pth' % model_name))
+    # Move model to CPU
+    device = torch.device('cpu')
+    model = model.to(device)
+    model.eval()
 
-    # # Move model to appropriate device
-    # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    # model = model.to(device)
-    # model.eval()
+    # Convert PIL image to OpenCV format
+    image_cv = np.array(image)
+    image_cv = cv2.cvtColor(image_cv, cv2.COLOR_RGB2BGR)
 
-    # # Convert image to RGB if it's in BGR
-    # if image_np.shape[2] == 3:  # Check if the image is BGR
-    #     image_np = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
+    # Apply transformations
+    transform = Compose([
+        albu.Resize(config['input_h'], config['input_w']),
+        albu.Normalize(),
+    ])
+    transformed_image = transform(image=image_cv)['image']
+    transformed_image = torch.unsqueeze(torch.from_numpy(transformed_image.transpose(2, 0, 1)), dim=0).float()
 
-    # # Apply transformations
-    # transform = Compose([
-    #     albu.Resize(config['input_h'], config['input_w']),
-    #     albu.Normalize(),
-    # ])
-    # transformed_image = transform(image=image_np)['image']
-    # transformed_image = torch.unsqueeze(torch.from_numpy(transformed_image.transpose(2, 0, 1)), dim=0).float()
+    # Move input image to CPU
+    transformed_image = transformed_image.to(device)
 
-    # # Move input image to the appropriate device
-    # transformed_image = transformed_image.to(device)
+    # Predict segmentation mask
+    with torch.no_grad():
+        output = model(transformed_image)
+        output = torch.sigmoid(output).cpu().numpy()
 
-    # # Predict segmentation mask
-    # with torch.no_grad():
-    #     output = model(transformed_image)
-    #     output = torch.sigmoid(output).cpu().numpy()
+    # Save segmented image
+    output_image = output[0].transpose(1, 2, 0)
+    output_image = (output_image * 255).astype('uint8')
 
-    # # Save segmented image
-    # output_image = output[0].transpose(1, 2, 0)
-    # output_image = (output_image * 255).astype('uint8')
-    # segmented_image = Image.fromarray(output_image)
-
-    # return segmented_image
+    return output_image
 
 def main():
+
+    args = parse_args()
+
+    print("Available architectures:", archs.__dict__)
+    # Load the pre-trained model
+    model_name = args['model_name']
+
+    print("Available model architectures:", list(archs.__dict__.keys()))
+
+
+    if model_name not in archs.__dict__:
+        raise ValueError(f"Model architecture '{model_name}' not found in the archs module.")
+    
+    num_classes = 1  # Assuming binary segmentation
+    input_channels = 3  # Assuming RGB images
+
+    # Load the pre-trained model with specified arguments
+    model = archs.__dict__[model_name](num_classes=num_classes, input_channels=input_channels)
+    model.load_state_dict(torch.load('models/%s/model.pth' % model_name, map_location=torch.device('cpu')))
+
     mri_file = st.file_uploader("Upload MRI Image", type=["png", "jpg", "jpeg"], key=1)
     mask_file = st.file_uploader("Upload Mask Image", type=["png", "jpg", "jpeg"], key=2)
 
@@ -90,8 +110,9 @@ def main():
         if st.button('Segment Image'):
             # segmented_image = segment_image(mri_np, "brain_UNet_woDS")
             # st.image(segmented_image, caption='Segmented Image', use_column_width=True)
+            segmented_image = segment_image(mriImage, model)
             with col3:
-                st.image(maskImage, caption='Segmented Image')
+                st.image(segmented_image, caption='Segmented Image')
 
 
     if mri_file is not None and mask_file is None:
@@ -107,6 +128,7 @@ def main():
         if st.button('Segment Image'):
             # segmented_image = segment_image(mri_np, "brain_UNet_woDS")
             # st.image(segmented_image, caption='Segmented Image', use_column_width=True)
+            segmented_image = segment_image(mriImage, model)
             with col2:
                 st.image(mriImage, caption='Segmented Image')
 
