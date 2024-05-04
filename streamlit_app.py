@@ -130,7 +130,7 @@ def main():
             # st.image(segmented_image, caption='Segmented Image', use_column_width=True)
             segmented_image = segment_image(mriImage, model)
             with col2:
-                st.image(mriImage, caption='Segmented Image')
+                st.image(segmented_image, caption='Segmented Image')
 
 if __name__ == '__main__':
     main()
