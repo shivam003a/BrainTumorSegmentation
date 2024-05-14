@@ -22,7 +22,8 @@ st.title("Brain Tumor Segmentation")
 st.sidebar.image("./logo.png", width=120)
 st.sidebar.write("### Early Brain Tumor Detection System using Modified U-Net")
 st.sidebar.write("\n**Guided By:**  \nAshwini Kumar Upadhyaya  \nAsst. Professor, Rec Kannauj");
-st.sidebar.write("\n\n\n**Project By:**  \nShivam Singh(54)  \nDeependu Mishra(28)  \nSudhir Tiwari(59)  \nAshish Yadav(23)  \nNitesh Kumar(39)")
+# st.sidebar.write("\n\n\n**Project By:**  \nShivam Singh(54)  \nDeependu Mishra(28)  \nSudhir Tiwari(59)  \nAshish Yadav(23)  \nNitesh Kumar(39)")
+st.sidebar.write("\n\n\n**Project By:**  \nAshish Yadav(23)  \nDeependu Mishra(28)  \nNitesh Kumar(39)  \nShivam Singh(54)  \nSudhir Tiwari(59)")
 
 def parse_args():
     # Dummy function, no need for argparse in Streamlit
@@ -179,7 +180,7 @@ def main():
             segmented_image = segment_image(mriImage, model)
             with col3:
                 st.image(segmented_image, caption='Segmented Image')
-                
+
             metrics = evaluate_segmentation(maskImage, segmented_image)
             if metrics:
                 st.write("Dice Score:", metrics["Dice"])
