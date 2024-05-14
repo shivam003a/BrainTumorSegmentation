@@ -68,6 +68,72 @@ def segment_image(image, model):
 
     return output_image
 
+def compute_dice(y_true, y_pred):
+    intersection = np.sum(y_true * y_pred)
+    union = np.sum(y_true) + np.sum(y_pred)
+    return 2 * intersection / (union + 1e-7)
+
+def compute_accuracy(y_true, y_pred):
+    return np.mean(y_true == y_pred)
+
+def compute_precision(y_true, y_pred):
+    true_positive = np.sum((y_true == 1) & (y_pred == 1))
+    false_positive = np.sum((y_true == 0) & (y_pred == 1))
+    return true_positive / (true_positive + false_positive + 1e-7)
+
+def compute_hausdorff(y_true, y_pred):
+    return np.max(cv2.distanceTransform(np.uint8(y_true), cv2.DIST_L2, 3) * y_pred)
+
+def compute_sensitivity(y_true, y_pred):
+    true_positive = np.sum((y_true == 1) & (y_pred == 1))
+    false_negative = np.sum((y_true == 1) & (y_pred == 0))
+    return true_positive / (true_positive + false_negative + 1e-7)
+
+def compute_jaccard(y_true, y_pred):
+    intersection = np.sum(y_true * y_pred)
+    union = np.sum(y_true) + np.sum(y_pred) - intersection
+    return intersection / (union + 1e-7)
+
+def evaluate_segmentation(gt_image, segmented_image):
+    try:
+        # Convert PIL images to NumPy arrays if needed
+        if isinstance(gt_image, Image.Image):
+            gt_image = np.array(gt_image)
+        if isinstance(segmented_image, Image.Image):
+            segmented_image = np.array(segmented_image)
+        
+        # Ensure both images have the same dimensions
+        if gt_image.shape != segmented_image.shape:
+            segmented_image_resized = cv2.resize(segmented_image, (gt_image.shape[1], gt_image.shape[0]))
+        else:
+            segmented_image_resized = segmented_image
+        
+        # Thresholding
+        _, gt_binary = cv2.threshold(gt_image, 128, 1, cv2.THRESH_BINARY)
+        _, segmented_binary = cv2.threshold(segmented_image_resized, 51, 1, cv2.THRESH_BINARY)
+        
+        # Compute evaluation metrics
+        dice_score = compute_dice(gt_binary, segmented_binary)
+        accuracy = compute_accuracy(gt_binary, segmented_binary)
+        precision = compute_precision(gt_binary, segmented_binary)
+        hausdorff = compute_hausdorff(gt_binary, segmented_binary)
+        sensitivity = compute_sensitivity(gt_binary, segmented_binary)
+        jaccard = compute_jaccard(gt_binary, segmented_binary)
+        
+        # Return selected evaluation metrics
+        return {
+            "Dice": dice_score,
+            "Accuracy": accuracy,
+            "Precision": precision,
+            "Hausdorff": hausdorff,
+            "Sensitivity": sensitivity,
+            "Jaccard": jaccard
+        }
+    except Exception as e:
+        st.write(e)
+        return None
+
+
 def main():
 
     args = parse_args()
@@ -113,6 +179,18 @@ def main():
             segmented_image = segment_image(mriImage, model)
             with col3:
                 st.image(segmented_image, caption='Segmented Image')
+                
+            metrics = evaluate_segmentation(maskImage, segmented_image)
+            if metrics:
+                st.write("Dice Score:", metrics["Dice"])
+                st.write("Accuracy:", metrics["Accuracy"])
+                st.write("Precision:", metrics["Precision"])
+                st.write("Jaccard:", metrics["Jaccard"])
+                st.write("Sensitivity:", metrics["Sensitivity"])
+                st.write("Hausdorff:", metrics["Hausdorff"])
+                # Add other metrics similarly
+            else:
+                st.write("Error occurred during evaluation.")
 
 
     if mri_file is not None and mask_file is None:
